@@ -20,6 +20,8 @@ jobs:
       run: npm i
     - name: Build app
       run: npm run distmac
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Find built file
       id: findfile
       run: echo "::set-output name=build::$(find ./dist -type f -regex ".*\.dmg")"
