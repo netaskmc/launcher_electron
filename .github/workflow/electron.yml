@@ -1,0 +1,56 @@
+# name of your github action
+name: Build app
+# this will help you specify where to run 
+on:
+  push:
+    tags:
+      - 'v*'
+# this is where the magic happens, each job happens in parallel btw
+jobs:
+  build_on_mac:
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Setup node
+      uses: actions/setup-node@master
+      with:
+        node-version: 12.16
+    - name: Install npm modules
+      run: npm i
+    - name: Build app
+      run: npm run distmac
+    - name: Find built file
+      id: findfile
+      run: echo "::set-output name=build::$(find ./dist -type f -regex ".*\.dmg")"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ steps.findfile.outputs.build }}
+        asset_name: ntl_${{ github.ref }}.dmg
+        asset_content_type: application/dmg
+#build_on_win:
+#    runs-on: windows-2016
+#    steps:
+#    - uses: actions/checkout@master
+#      with:
+#        ref: feature/github-actions        
+#    - uses: actions/setup-node@master
+#      with:
+#        node-version: 12.16
+#    - name: see directory
+#      run: ls

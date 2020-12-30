@@ -18,7 +18,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder -mw"
+    "distwin": "electron-builder --win",
+    "distmac": "electron-builder --mac"
   },
   "build": {
     "appId": "com.mlntcandy.netaskmodded",
