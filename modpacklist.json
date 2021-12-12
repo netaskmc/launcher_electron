@@ -11,7 +11,7 @@
             "name": "netask_modern",
             "display_name": "NeTask Modern",
             "version": "1.16.5",
-            "link": "http://example.com/modpacks/modern/"
+            "link": "http://localhost:3000/"
         }
     ]
 }
