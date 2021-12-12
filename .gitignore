@@ -1,6 +1,11 @@
 # NTMLauncher-specific ignores
 
 NTMLauncher/
+serve-ntml-modpack/node_modules
+serve-ntml-modpack/modpack/mods
+serve-ntml-modpack/modpack/base.zip
+serve-ntml-modpack/modpack/img.jpg
+serve-ntml-modpack/modpack/img.png
 
 # Below is a template
 # Logs

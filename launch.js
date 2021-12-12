@@ -2,8 +2,6 @@ const { Client, Authenticator } = require('minecraft-launcher-core');
 const launcher = new Client();
 const fs = require('fs-extra');
 const path = require('path');
-const { app } = require('electron');
-
 
 module.exports = function LaunchModule(altospath) {
 

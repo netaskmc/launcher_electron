@@ -1,0 +1,17 @@
+{
+    "modpacks": [
+        {
+            "name": "netaskmodded",
+            "display_name": "NeTaskModded",
+            "version": "1.12.2",
+            "link": "unavailable",
+            "img": "https://media.discordapp.net/attachments/672076649705242625/919693473521750016/logo_Glow.jpg"
+        },
+        {
+            "name": "netask_modern",
+            "display_name": "NeTask Modern",
+            "version": "1.16.5",
+            "link": "http://example.com/modpacks/modern/"
+        }
+    ]
+}

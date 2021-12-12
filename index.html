@@ -187,7 +187,24 @@
                 background: rgba(0,0,0,.9);
             }
 
-
+            .mpselect::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            .mpselect::-webkit-scrollbar-track {
+                border-radius: 10px;
+                background: rgba(0,0,0,0.1);
+            }
+            .mpselect::-webkit-scrollbar-thumb{
+                border-radius: 10px;
+                background: rgba(0,0,0,0.2);
+            }
+            .mpselect::-webkit-scrollbar-thumb:hover{
+                background: rgba(0,0,0,0.4);
+            }
+            .mpselect::-webkit-scrollbar-thumb:active{
+                background: rgba(0,0,0,.9);
+            }
 
 
             #launch.loading-spinner, #dlmods.loading-spinner {
@@ -322,11 +339,47 @@
             details[open]>summary:before {
                 transform: rotate(90deg);
             }
+            .mpselect {
+                background-color: rgb(32, 32, 32);
+                border-radius: 10px;
+                display: flex;
+                flex-direction: row;
+                margin: 10px;
+                overflow: hidden;
+                overflow-x: auto;
+                padding: 5px;
+            }
+            .mpselect .modpack {
+                border-radius: 10px;
+                padding: 10px;
+                width: 130px;
+                background-color: #ff9e9e00;
+                transition: ease 0.2s;
+            }
+            .mpselect .modpack[selected] {
+                border-radius: 10px;
+                background-color: #ff9e9e49;
+            }
+            .mpselect .modpack .mpimg {
+                width: 130px;
+                height: 130px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            img {
+                -webkit-user-drag: none;
+            }
+            .mpselect .modpack .mptitle {
+                padding: 10px 0 0px 0;
+            }
         </style>
         <script>
             const { ipcRenderer } = require('electron')
             
-            ipcRenderer.on('takeappversion', (e, v) => {document.getElementById('versionstr').innerText = v})
+            ipcRenderer.on('takeappversion', (e, v) => {
+                document.getElementById('versionstr').innerText = 'v' + v
+                document.title = "NeTask Launcher v" + v
+            })
 
             function shake(id) {
                 document.getElementById(id).classList.remove('disclick');
@@ -444,6 +497,24 @@
             <img src="res/ntl.svg" class="logo">
             <p id="versionstr"></p>
             <br>
+            <div class="mpselect">
+                <div class="modpack" mpid="netask_modern">
+                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
+                    <div class="mptitle">NeTask Modern</div>
+                </div>
+                <div class="modpack" selected mpid="long_mp">
+                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
+                    <div class="mptitle">A Long Modpack Name</div>
+                </div>
+                <div class="modpack">
+                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
+                    <div class="mptitle">Modpack</div>
+                </div>
+                <div class="modpack">
+                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
+                    <div class="mptitle">Modpack</div>
+                </div>
+            </div>
             <button id="dlmods" onclick="dlmp(this)">Скачать модпак</button>
             <button id="rmmods" onclick="rmmp(this)">Удалить модпак</button>
             <details>

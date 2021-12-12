@@ -11,7 +11,9 @@ var lnchlog = '[LOG START]'
 var testermode = false
 var remoteData = {}
 
-const version = '1.16.5'
+const mc_version = '1.16.5'
+
+var modpacks = {}
 
 require('update-electron-app')()
 
@@ -91,7 +93,6 @@ ipcMain.on('dl-modpack', (e) => {
           thewin.webContents.send("pbar", 0)
           thewin.webContents.send("mpload", false)
           thewin.webContents.send("mpstatus", lnch.checkForModpack())
-
       });
       
   }
@@ -109,7 +110,7 @@ ipcMain.on('rm-modpack', (e) => {
 ipcMain.on('launch', (e, nickname, ram, connect) => {
     if (ram == '') {ram = '4G'}
     thewin.webContents.send("pbar", 0.5)
-    lnch.launch(nickname, ram, connect, version, (progress) => {
+    lnch.launch(nickname, ram, connect, mc_version, (progress) => {
         if (progress.type == 'close') return thewin.webContents.send("gameload", false)
         thewin.webContents.send("gameload", true)
         thewin.webContents.send("pbar", ((progress.task+1)/(progress.total+1)))

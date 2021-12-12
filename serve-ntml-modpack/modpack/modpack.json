@@ -1,0 +1,6 @@
+{
+    "name": "example_modpack",
+    "version": "1.16.5",
+    "img": "img.jpg",
+    "base": "base.zip"
+}
