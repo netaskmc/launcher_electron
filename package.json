@@ -1,14 +1,16 @@
 {
-  "name": "NTMLauncher",
-  "version": "1.1.0",
-  "description": "NeTaskModded launcher",
+  "name": "ntmlauncher",
+  "version": "2.0.0",
+  "description": "NeTask launcher",
   "main": "main.js",
   "dependencies": {
     "decompress-zip": "^0.2.2",
     "electron-dl": "^3.0.2",
+    "fs-extra": "^9.0.1",
     "hastebin": "^0.2.1",
     "minecraft-launcher-core": "^3.15.6",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "update-electron-app": "^2.0.1"
   },
   "devDependencies": {
     "electron": "^11.1.1",
@@ -31,9 +33,20 @@
     "mac": {
       "target": "dmg",
       "category": "public.app-category.adventure-games"
+    },
+    "linux": {
+      "target": "deb"
     }
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Mlntcandy <me@mlntcandy.com> (https://mlntcandy.com/)",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlntcandy/NTMLauncher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mlntcandy/NTMLauncher/issues"
+  },
+  "homepage": "https://github.com/mlntcandy/NTMLauncher#readme"
 }

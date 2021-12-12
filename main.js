@@ -3,12 +3,17 @@ const LaunchModule = require('./launch')
 const lnch = new LaunchModule(app.getPath('documents'));
 const { download } = require('electron-dl')
 var DecompressZip = require('decompress-zip');
-const request = require('request')
+const request = require('request');
+const { version } = require('request/lib/helpers');
 let thewin = null
 
 var lnchlog = '[LOG START]'
 var testermode = false
 var remoteData = {}
+
+const version = '1.16.5'
+
+require('update-electron-app')()
 
 request('https://raw.githubusercontent.com/mlntcandy/mlntcandy.com/master/assets/ntm.json', {}, (e, r, b) => {
   remoteData = JSON.parse(b)
@@ -46,6 +51,7 @@ app.on('activate', () => {
 })
 
 ipcMain.on('load-finish', () => {
+    thewin.webContents.send("takeappversion", app.getVersion())
     thewin.webContents.send("mpstatus", lnch.checkForModpack())
     thewin.webContents.send("prefs", lnch.readPrefs())
     lnch.setLogger((d) => {
@@ -103,7 +109,7 @@ ipcMain.on('rm-modpack', (e) => {
 ipcMain.on('launch', (e, nickname, ram, connect) => {
     if (ram == '') {ram = '4G'}
     thewin.webContents.send("pbar", 0.5)
-    lnch.launch(nickname, ram, connect, (progress) => {
+    lnch.launch(nickname, ram, connect, version, (progress) => {
         if (progress.type == 'close') return thewin.webContents.send("gameload", false)
         thewin.webContents.send("gameload", true)
         thewin.webContents.send("pbar", ((progress.task+1)/(progress.total+1)))

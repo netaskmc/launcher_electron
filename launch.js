@@ -1,7 +1,8 @@
 const { Client, Authenticator } = require('minecraft-launcher-core');
 const launcher = new Client();
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
+const { app } = require('electron');
 
 
 module.exports = function LaunchModule(altospath) {
@@ -28,7 +29,7 @@ module.exports = function LaunchModule(altospath) {
     this.appDirectory = appDir;
     this.pathModule = path;
 
-    this.launch = function(nickname, ram, connect, callback) {
+    this.launch = function(nickname, ram, connect, version, callback) {
         let opts = {
             clientPackage: null,
             // For production launchers, I recommend not passing 
@@ -38,7 +39,7 @@ module.exports = function LaunchModule(altospath) {
             authorization: Authenticator.getAuth(nickname),
             root: gameDir,
             version: {
-                number: "1.12.2",
+                number: version,
                 type: "release"
             },
             memory: {
@@ -71,7 +72,13 @@ module.exports = function LaunchModule(altospath) {
         return fs.existsSync(gameDir + "/forge.jar");
     }
     this.deleteModpack = function() {
+        let bckup = ['saves/', 'servers.dat', 'options.txt'];
+        this.backupPaths(bckup, false);
         fs.rmdirSync(gameDir, {recursive: true});
+        if (!fs.existsSync(gameDir)) {
+            fs.mkdirSync(gameDir);
+        }
+        this.backupPaths(bckup, true);
     }
     this.savePrefs = function(nick, ram, connect) {
         fs.writeFileSync(path.join(appDir, '/prefs.json'), JSON.stringify({
@@ -91,5 +98,16 @@ module.exports = function LaunchModule(altospath) {
     this.acceptServerIP = function(ip, port) {
         serverdata.ip = ip;
         serverdata.port = port;
+    }
+    this.backupPaths = function(paths, restore) {
+        for (let bpath of paths) {
+            rpath = path.join(appDir, '/backup/', bpath);
+            mpath = path.join(gameDir, bpath);
+            if (!restore) {
+                fs.moveSync(mpath, rpath);
+            } else {
+                fs.moveSync(rpath, mpath);
+            }
+        }
     }
 }

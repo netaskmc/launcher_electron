@@ -26,12 +26,11 @@
 
             
             ::selection {
-                background:  rgba(255, 133, 255, 0.7); /* WebKit/Blink Browsers */
+                background:  rgba(255, 161, 161, 0.7); /* WebKit/Blink Browsers */
             }
 
             body {
-                background: rgb(18,12,56);
-                background: linear-gradient(27deg, rgba(18,12,56,1) 0%, rgba(23,10,24,1) 50%, rgba(55,0,41,1) 100%);
+                background: #333333;
                 margin: 0;
                 color: white;
                 font-family: "Inter", sans-serif;
@@ -46,7 +45,7 @@
             input[type=text] {
                 padding: 15px;
                 background-color: rgb(32, 32, 32);
-                border: 2px solid rgb(51, 51, 51);
+                border: 2px solid rgb(70, 70, 70);
                 border-radius: 7px;
                 color: white;
                 font-size: 14pt;
@@ -59,7 +58,7 @@
             button {
                 padding: 15px;
                 background-color: rgb(32, 32, 32);
-                border: 2px solid rgb(51, 51, 51);
+                border: 2px solid rgb(70, 70, 70);
                 font-size: 14pt;
                 border-radius: 7px;
                 color: white;
@@ -71,12 +70,12 @@
             }
             
             button:focus, input:focus {
-                box-shadow: 0 0 10px rgba(255, 133, 255, 0.3);
-                border-color: rgb(165, 119, 144);
+                box-shadow: 0 0 5px #FF848467;
+                border-color: #a16e6e;
             }
             button:hover, input:hover {
-                box-shadow: 0 0 10px rgba(255, 133, 255, 0.8);
-                border-color: rgb(255, 133, 255);
+                box-shadow: 0 0 10px #FF8484a2;
+                border-color: #ffabab;
             }
             *:focus {
                 outline: none;
@@ -106,7 +105,7 @@
             }
             #pbar {
                 position: relative;
-                background-color: rgb(255, 133, 255);
+                background-color: #FF8484;
                 width: 0%;
                 height: 20px;
                 transition: ease .2s;
@@ -120,9 +119,10 @@
             #bottom {
                 height: 116px;
                 background-color: rgba(0, 0, 0, 0.7);
+                
             }
             #console {
-                margin: 30px 0;
+                margin: 15px 0;
                 height: 200px;
                 width: 100%;
                 background-color: rgb(32, 32, 32);
@@ -137,8 +137,8 @@
                 
             }
             .logo {
-                width: 80%;
-                max-height: 200px;
+                width: 70%;
+                max-height: 80px;
                 margin-bottom: 40px;
                 -webkit-user-drag: none;
             }
@@ -223,28 +223,111 @@
             .green {
                 color: rgb(68, 139, 68);
             }
+            input[type="checkbox"] {
+                position: relative;
+                -webkit-appearance: none;
+                background-color: rgb(32, 32, 32);
+                padding: .5rem;
+                transition: all .1s ease;
+                margin: .25rem;
+                border: transparent .15rem solid;
+                outline: none;
+                box-shadow: none;
+                border-radius: 5px;
+                top: 9px;
+            }
 
-            #connect {
-                filter: brightness(0.2) hue-rotate(90deg);
-                transition: ease 0.2s;
+            input[type="checkbox"]:checked {
+                background-color: #FF8484;
             }
-            #connect:checked {
-                filter: brightness(1.54) hue-rotate(90deg);
+
+            input[type="checkbox"]:focus {
+                border-color: #c36b6b;
             }
-            #connect:focus {
-                filter: brightness(0.5) hue-rotate(90deg);
+
+            input[type="checkbox"]:not(.switch):before {
+                content: '';
+                position: absolute;
+                width: .15rem;
+                height: 0rem;
+                left: .4rem;
+                top: 0rem;
+                border: rgb(93, 93, 93) .15rem solid;
+                border-left: none;
+                border-top: none;
+                transform: rotate(45deg);
+                transition: all .1s ease;
+                opacity: 0;
             }
-            #connect:focus:checked {
-                filter: brightness(2) hue-rotate(90deg);
+
+            input[type="checkbox"]:not(.switch):checked::before {
+                height: .4rem;
+                top: .15rem;
+                opacity: 1;
+            }
+
+            input[type="checkbox"].switch {
+                width: 2.5rem;
+                border-radius: 100px;
             }
             .check {
                 margin: 0 0 20px 0;
                 font-size: 90%;
             }
+
+            details {
+                margin: 2.3rem 0;
+                padding: 0;
+                max-height: 23px;
+                transition: ease 0.2s;
+                overflow: hidden;
+            }
+            details[open] {
+                max-height: 230px;
+                transition: ease 0.2s;
+            }
+
+            details summary {
+                font-weight: bold;
+                cursor: pointer;
+                display: block;
+                position: relative;
+                text-align: start;
+                margin: 0 auto;
+                width: fit-content;
+                left: 10px;
+            }
+
+            details summary::-webkit-details-marker {
+                display: none;
+            }
+
+            details summary::marker {
+                display: none;
+            }
+
+            details summary::before {
+                content: '';
+                border-width: .4rem;
+                border-style: solid;
+                border-color: transparent transparent transparent #fff;
+                position: absolute;
+                top: .3rem;
+                left: -1.25rem;
+                transform: rotate(0);
+                transform-origin: .2rem 50%;
+                transition: .25s transform ease;
+            }
+
+            details[open]>summary:before {
+                transform: rotate(90deg);
+            }
         </style>
         <script>
             const { ipcRenderer } = require('electron')
             
+            ipcRenderer.on('takeappversion', (e, v) => {document.getElementById('versionstr').innerText = v})
+
             function shake(id) {
                 document.getElementById(id).classList.remove('disclick');
                 document.getElementById(id).classList.add('disclick');
@@ -314,6 +397,14 @@
                 document.getElementById('nickname').value = prefs.nickname
                 document.getElementById('rampick').value = prefs.ram
                 document.getElementById('connect').checked = prefs.connect
+
+                document.getElementById('nickname').addEventListener('keypress', (e) => {
+                    let match = (e.target.value + e.key).match(/^\w{0,16}$/)
+                    if (!match || match[0] == "") {
+                        e.preventDefault()
+                        e.stopPropagation()
+                    }
+                })
             })
 
             function dlmp(o) {
@@ -344,19 +435,26 @@
                     
                 }
             })
+
+            
         </script>
     </head>
     <body>
         <div id="top">
-            <img src="res/DarkBG_text+logo.svg" class="logo">
+            <img src="res/ntl.svg" class="logo">
+            <p id="versionstr"></p>
             <br>
             <button id="dlmods" onclick="dlmp(this)">Скачать модпак</button>
             <button id="rmmods" onclick="rmmp(this)">Удалить модпак</button>
-            <div id="console">
-                <div class="entry" ondblclick="ipcRenderer.send('upload-log')">[LOG START]</div>
-            </div>
+            <details>
+                <summary>Консоль</summary>
+                <div id="console">
+                    <div class="entry" ondblclick="ipcRenderer.send('upload-log')">[LOG START]</div>
+                </div>
+            </details>
+            
             <h3>Выделение памяти</h3>
-            <p>Мин. (ниже возможны проблемы): <b>4G</b><br><span class="green">Рек.: <b>6G</b></span><br>Ульт.: <b>8G</b></p>
+            <p>Мин. (ниже возможны проблемы): <b>3600M</b><br><span class="green">Рек.: <b>4G</b></span><br>Ульт.: <b>5G</b></p>
             <input type="text" id="rampick" placeholder="4G">
             <p class="check"><input id="connect" type="checkbox"><label for="connect"> Подключаться к серверу автоматически после запуска игры</label></p>
         </div>
