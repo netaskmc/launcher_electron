@@ -1,7 +1,7 @@
 {
   "name": "ntmlauncher",
   "version": "2.0.0",
-  "description": "NeTask launcher",
+  "description": "NeTask Launcher",
   "main": "main.js",
   "dependencies": {
     "decompress-zip": "^0.2.2",
@@ -24,8 +24,8 @@
     "distmac": "electron-builder --mac"
   },
   "build": {
-    "appId": "com.mlntcandy.netaskmodded",
-    "productName": "NeTaskModded",
+    "appId": "com.mlntcandy.netasklauncher",
+    "productName": "NeTask Launcher",
     "win": {
       "target": "portable",
       "icon": "build/icon.ico"
