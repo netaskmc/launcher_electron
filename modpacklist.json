@@ -11,7 +11,7 @@
             "name": "netask_modern",
             "display_name": "NeTask Modern",
             "version": "1.16.5",
-            "link": "http://localhost:3000/",
+            "link": "http://gitea.stockings.mlntcandy.com/netask/modern/raw/branch/master/modpack.json",
             "img": "https://media.discordapp.net/attachments/672076649705242625/919663633112391680/Frame_6.png"
         }
     ]
