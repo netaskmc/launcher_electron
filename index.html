@@ -187,25 +187,28 @@
                 background: rgba(0,0,0,.9);
             }
 
-            .mpselect::-webkit-scrollbar {
+            #mpselect::-webkit-scrollbar {
                 width: 6px;
                 height: 6px;
             }
-            .mpselect::-webkit-scrollbar-track {
+            #mpselect::-webkit-scrollbar-track {
                 border-radius: 10px;
                 background: rgba(0,0,0,0.1);
             }
-            .mpselect::-webkit-scrollbar-thumb{
+            #mpselect::-webkit-scrollbar-thumb{
                 border-radius: 10px;
                 background: rgba(0,0,0,0.2);
             }
-            .mpselect::-webkit-scrollbar-thumb:hover{
+            #mpselect::-webkit-scrollbar-thumb:hover{
                 background: rgba(0,0,0,0.4);
             }
-            .mpselect::-webkit-scrollbar-thumb:active{
+            #mpselect::-webkit-scrollbar-thumb:active{
                 background: rgba(0,0,0,.9);
             }
 
+            #dlmods.update {
+                background-color: #4d3109;
+            }
 
             #launch.loading-spinner, #dlmods.loading-spinner {
                 background: url('res/icons/Rolling-1s-18px.svg') no-repeat rgb(32, 32, 32) 9px 10px;
@@ -290,6 +293,7 @@
             .check {
                 margin: 0 0 20px 0;
                 font-size: 90%;
+                display: none;
             }
 
             details {
@@ -339,7 +343,7 @@
             details[open]>summary:before {
                 transform: rotate(90deg);
             }
-            .mpselect {
+            #mpselect {
                 background-color: rgb(32, 32, 32);
                 border-radius: 10px;
                 display: flex;
@@ -349,36 +353,168 @@
                 overflow-x: auto;
                 padding: 5px;
             }
-            .mpselect .modpack {
+            #mpselect .modpack {
                 border-radius: 10px;
                 padding: 10px;
+                margin: 3px;
                 width: 130px;
                 background-color: #ff9e9e00;
                 transition: ease 0.2s;
+                cursor: pointer;
             }
-            .mpselect .modpack[selected] {
+            #mpselect .modpack:hover {
+                background-color: #ff9e9e1e;
+            }
+            #mpselect .modpack[mpselected] {
                 border-radius: 10px;
-                background-color: #ff9e9e49;
+                background-color: #ff9e9e36;
+                cursor: default;
             }
-            .mpselect .modpack .mpimg {
+            #mpselect .modpack .mpimg {
                 width: 130px;
                 height: 130px;
                 border-radius: 10px;
                 overflow: hidden;
+                position: relative;
             }
             img {
                 -webkit-user-drag: none;
             }
-            .mpselect .modpack .mptitle {
+            #mpselect .modpack .mptitle {
                 padding: 10px 0 0px 0;
             }
+            #mpselect .modpack[unavailable] .mpimg img {
+                filter: saturate(0.1);
+            }
+            #mpselect .modpack[unavailable] {
+                color: #727272;
+                position: relative;
+            }
+            /* #mpselect .modpack[unavailable]::after {
+                content: 'Недоступно';
+                font-size: small;
+                position: absolute;
+                left: 15px;
+                top: 15px;
+                width: auto;
+                padding: 0 10px;
+                height: 17px;
+                background-color: #ff4a4a;
+                color: #fff;
+                border-radius: 10px;
+                font-weight: 500;
+            } */
+            #mptheme {
+                background: linear-gradient(0deg, #333333 0%, #333333aa 100%), var(--mpbg);
+                opacity: 0.15;
+                filter: blur(20px) saturate(5);
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                z-index: -1;
+                transition: opacity .3s ease;
+            }
+            #mptheme[changing] {
+                opacity: 0;
+            }
+            .modpack .indicator {
+                position: absolute;
+                right: 5px;
+                bottom: 5px;
+                width: 26px;
+                height: 26px;
+                color: #fff;
+                border-radius: 50%;
+                font-weight: 500;
+                background-repeat: no-repeat;
+                transition: background-color .2s ease;
+                background-color: #004ca3;
+                background-image: url('res/icons/Rolling-1s-18px.svg');
+                background-size: 20px;
+                background-position: 3px 3px;
+                z-index: 1;
+            } 
+
+            .modpack[status][unavailable] .indicator {
+                background-color: #a30000;
+                background-image: url('res/icons/block_white_24dp.svg');
+                background-size: 20px;
+                background-position: 3px 3px;
+            } 
+
+            .modpack[status="installed"] .indicator {
+                background-color: #00a344;
+                background-image: url('res/icons/file_download_done_white_24dp.svg');
+                background-size: 20px;
+                background-position: 3px 3px;
+            } 
+            .modpack[status="uninstalled"] .indicator {
+                background-color: #7e31c7;
+                background-image: url('res/icons/file_download_white_24dp.svg');
+                background-size: 20px;
+                background-position: 3px 3px;
+            } 
+            @keyframes updatingBreathe {
+                0%, 100% {
+                    background-color: #21b9e7;
+                }
+                50% {
+                    background-color: #8d64ff;
+                }
+            }
+            .modpack[status="updating"] .indicator {
+                background-color: #64acff;
+                background-image: url('res/icons/Rolling-1s-18px.svg');
+                background-size: 20px;
+                background-position: 3px 3px;
+                animation: updatingBreathe 2s ease-in-out infinite;
+            } 
+            .modpack[status="updateable"] .indicator {
+                background-color: #ec8e00;;
+                background-image: url('res/icons/cloud_download_white_24dp.svg');
+                background-size: 18px;
+                background-position: 4px 4px;
+            } 
+            @keyframes updatePulse {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.1);
+                }
+                20% {
+                    opacity: 0.6;
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(2);
+                }
+            }
+            .modpack[status="updateable"]:not([unavailable]) .indicator::after {
+                content: '';
+                position: absolute;
+                background-color: #ffbb4e;
+                width: inherit;
+                height: inherit;
+                left: 0;
+                border-radius: 50%;
+                animation: updatePulse 1s ease-out infinite;
+            }
+            
         </style>
         <script>
             const { ipcRenderer } = require('electron')
             
+            var modpacks_list = []
+
+
+            var selectedModpack = ''
+
             ipcRenderer.on('takeappversion', (e, v) => {
                 document.getElementById('versionstr').innerText = 'v' + v
                 document.title = "NeTask Launcher v" + v
+                ipcRenderer.send('get_modpacks')
             })
 
             function shake(id) {
@@ -399,24 +535,6 @@
             ipcRenderer.on('pbar', (e, progress) => {
                 document.getElementById('pbar').style.width = `${Math.round(progress*100)}%`
             })
-            ipcRenderer.on('mpload', (e, isloading) => {
-                if (isloading) {
-                    document.getElementById("dlmods").classList.add('loading-spinner')
-                    document.getElementById('dlmods').innerText = 'Скачивание...'
-                } else {
-                    document.getElementById("dlmods").classList.remove('loading-spinner')
-                    document.getElementById('dlmods').innerText = 'Скачать модпак'
-                }
-            })
-            ipcRenderer.on('mprem', (e, isloading) => {
-                if (isloading) {
-                    document.getElementById("rmmods").classList.add('loading-spinner')
-                    document.getElementById('rmmods').innerText = 'Удаление...'
-                } else {
-                    document.getElementById("rmmods").classList.remove('loading-spinner')
-                    document.getElementById('rmmods').innerText = 'Удалить модпак'
-                }
-            })
             ipcRenderer.on('gameload', (e, isloading) => {
                 if (isloading) {
                     document.getElementById("launch").classList.add('loading-spinner')
@@ -434,32 +552,142 @@
                 }
             })
 
-            ipcRenderer.on('mpstatus', (e, installed) => {
-                if (installed) {
-                    document.getElementById("launch").classList.remove('dis')
-                    document.getElementById("rmmods").classList.remove('dis')
-                    document.getElementById("dlmods").classList.add('dis')
-                } else {
-                    document.getElementById("launch").classList.add('dis')
-                    document.getElementById("rmmods").classList.add('dis')
-                    document.getElementById("dlmods").classList.remove('dis')
+            function getSelectedModpack() {
+                for (let mp of modpacks_list) {
+                    if (mp.name == selectedModpack) return mp
                 }
-            })
+            }
+
+            function updateModpacksStatus() {
+                for (let mp of modpacks_list) {
+                    let name = modpacks_list.name
+                    let status = modpacks_list.status
+                    document.querySelector('.modpack[mpid=' + name + ']').setAttribute('status', status)
+                }
+            }
+
+            function updateButtonsToState() {
+                let sel = getSelectedModpack()
+                var state = "unavailable"
+                if (sel != undefined && sel.status != undefined && sel.status != null) {
+                    state = sel.status
+                }
+                let dl = document.getElementById('dlmods')
+                    let rm = document.getElementById('rmmods')
+                    let lnch = document.getElementById('launch')
+
+                    dl.classList.remove('loading-spinner')
+                    dl.classList.remove('update')
+                    dl.classList.remove('dis')
+                    rm.classList.remove('dis')
+                    lnch.classList.remove('dis')
+
+                    switch (state) {
+                        case "installed":
+                            dl.innerText = "Установлено"
+                            rm.innerText = "Удалить модпак"
+
+                            dl.classList.add('dis')
+                        break
+
+                        case "uninstalled":
+                            dl.innerText = "Скачать модпак"
+                            rm.innerText = "Не установлено"
+
+                            rm.classList.add('dis')
+                            lnch.classList.add('dis')
+                        break
+
+                        case "updating":
+                            dl.innerText = "Загрузка..."
+                            rm.innerText = "Удалить модпак"
+
+                            dl.classList.add('loading-spinner')
+                            dl.classList.add('dis')
+                            rm.classList.add('dis')
+                            lnch.classList.add('dis')
+                        break
+
+                        case "updateable":
+                            dl.innerText = "Обновить"
+                            rm.innerText = "Удалить модпак"
+
+                            dl.classList.add('update')
+                            lnch.classList.add('dis')
+                        break
+
+                        case "unavailable":
+                            dl.innerText = "Недоступно"
+                            rm.innerText = "Удалить модпак"
+
+                            dl.classList.add('dis')
+                            rm.classList.add('dis')
+                            lnch.classList.add('dis')
+                        break
+                    }
+                
+            }
 
             ipcRenderer.on('prefs', (e, prefs) => {
                 document.getElementById('nickname').value = prefs.nickname
                 document.getElementById('rampick').value = prefs.ram
                 document.getElementById('connect').checked = prefs.connect
 
-                document.getElementById('nickname').addEventListener('keypress', (e) => {
-                    let match = (e.target.value + e.key).match(/^\w{0,16}$/)
-                    if (!match || match[0] == "") {
-                        e.preventDefault()
-                        e.stopPropagation()
-                    }
-                })
+                selectModpack(prefs.selectedModpack)
             })
 
+            ipcRenderer.on('modpacks', (e, modpacks) => {
+                if (modpacks == false) setTimeout(() => ipcRenderer.send('get_modpacks'), 300)
+                var html = ''
+                for (let mp of modpacks) {
+                    html += `
+                    <div class="modpack" mpid="${mp.name}" ${mp.link == 'unavailable' ? 'unavailable' : ''} status="${mp.status}" ${selectedModpack == mp.name ? 'mpselected' : ''}>
+                        <div class="mpimg"><div class="indicator"></div><img src="${mp.img}" style="width: 100%"></div>
+                        <div class="mptitle">${mp.display_name}</div>
+                    </div>`
+                }
+                document.getElementById('mpselect').innerHTML = html
+                document.querySelectorAll('.modpack').forEach(el => {
+                    el.addEventListener('click', e => {
+                        if (e.currentTarget.hasAttribute('mpselected')) return
+
+                        selectModpack(e.currentTarget.getAttribute('mpid'))
+
+                    })
+                })
+                modpacks_list = modpacks
+                updateButtonsToState()
+            })
+            ipcRenderer.on('modpacks_update_state', (e, modpacks) => {
+                if (modpacks == false) return
+                modpacks_list = modpacks
+                for (let mp of modpacks) {
+                    document.querySelector(`.modpack[mpid=${mp.name}]`).setAttribute('status', mp.status)
+                }
+                updateButtonsToState()
+            })
+
+
+
+            function selectModpack(modpack) {
+                let selected = document.querySelector('.modpack[mpselected]')
+                if (selected && selected.hasAttribute('mpselected')) selected.removeAttribute('mpselected')
+                document.querySelector('.modpack[mpid=' + modpack + ']').setAttribute('mpselected', '')
+                selectedModpack = modpack
+                modpacks_list.forEach(mp => {
+                    if (mp.name == modpack) {
+                        let mptheme = document.getElementById('mptheme')
+                        let styleProperty = `--mpbg: url('${mp.img}')`
+                        mptheme.setAttribute('changing', '')
+                        setTimeout(()=>{
+                            mptheme.style = styleProperty
+                            mptheme.removeAttribute('changing')
+                        }, 300)
+                    }
+                })
+                ipcRenderer.send('select-modpack', modpack)
+                updateButtonsToState()
+            }
             function dlmp(o) {
                 if (o.classList.contains('dis')) return shake('dlmods');
                 ipcRenderer.send('dl-modpack')
@@ -489,31 +717,26 @@
                 }
             })
 
-            
+
+            window.onload = function() {
+                document.getElementById('nickname').addEventListener('keypress', (e) => {
+                    let match = (e.target.value + e.key).match(/^\w{0,16}$/)
+                    if (!match || match[0] == "") {
+                        e.preventDefault()
+                        e.stopPropagation()
+                    }
+                })
+            }
         </script>
     </head>
     <body>
+        <div id="mptheme"></div>
         <div id="top">
             <img src="res/ntl.svg" class="logo">
             <p id="versionstr"></p>
             <br>
-            <div class="mpselect">
-                <div class="modpack" mpid="netask_modern">
-                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
-                    <div class="mptitle">NeTask Modern</div>
-                </div>
-                <div class="modpack" selected mpid="long_mp">
-                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
-                    <div class="mptitle">A Long Modpack Name</div>
-                </div>
-                <div class="modpack">
-                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
-                    <div class="mptitle">Modpack</div>
-                </div>
-                <div class="modpack">
-                    <div class="mpimg"><img src="https://cdn.discordapp.com/attachments/672076649705242625/919663633112391680/Frame_6.png" style="width: 100%"></div>
-                    <div class="mptitle">Modpack</div>
-                </div>
+            <div id="mpselect">
+
             </div>
             <button id="dlmods" onclick="dlmp(this)">Скачать модпак</button>
             <button id="rmmods" onclick="rmmp(this)">Удалить модпак</button>

@@ -5,6 +5,7 @@ const { download } = require('electron-dl')
 var DecompressZip = require('decompress-zip');
 const request = require('request');
 const { version } = require('request/lib/helpers');
+const urljoin = require('url-join')
 let thewin = null
 
 var lnchlog = '[LOG START]'
@@ -14,13 +15,34 @@ var remoteData = {}
 const mc_version = '1.16.5'
 
 var modpacks = {}
+var areModpacksReady = false
+var selectedModpack = ''
 
 require('update-electron-app')()
 
-request('https://raw.githubusercontent.com/mlntcandy/mlntcandy.com/master/assets/ntm.json', {}, (e, r, b) => {
+request('https://raw.githubusercontent.com/mlntcandy/NTMLauncher/master/modpacklist.json', {}, (e, r, b) => {
   remoteData = JSON.parse(b)
-  lnch.acceptServerIP(remoteData.server.ip, remoteData.server.port)
+  modpacks = remoteData.modpacks
+  // parse modpacks once and for all
+  for (let mp in modpacks) {
+    if (modpacks[mp].link == "unavailable") continue
+    let getFullURL = (path) => urljoin(modpacks[mp].link, path)
+    request(modpacks[mp].link, {}, (er, res, body) => {
+      if (!er) {
+        var remote_mp = JSON.parse(body)
+        modpacks[mp] = {...modpacks[mp], ...remote_mp}
+      } else {
+        modpacks[mp].link = 'unavailable'
+      }
+
+      if (Number(mp) + 1 == modpacks.length) areModpacksReady = true
+      console.log(modpacks)
+    })
+  }
+  //lnch.acceptServerIP(remoteData.server.ip, remoteData.server.port)
 })
+
+console.log(modpacks)
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -35,6 +57,11 @@ function createWindow () {
   thewin = win
 }
 
+async function getMpState() {
+  modpacks = await lnch.checkAllModpacks(modpacks)
+  thewin.webContents.send("modpacks_update_state", modpacks)
+}
+
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
@@ -47,65 +74,47 @@ app.on('activate', () => {
     console.log(1)
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
-    
-
   }
 })
 
-ipcMain.on('load-finish', () => {
+ipcMain.on('load-finish', async () => {
     thewin.webContents.send("takeappversion", app.getVersion())
-    thewin.webContents.send("mpstatus", lnch.checkForModpack())
+    console.log((await lnch.checkAllModpacks(modpacks)))
+    thewin.webContents.send("mpstatus", (await lnch.checkAllModpacks(modpacks)))
     thewin.webContents.send("prefs", lnch.readPrefs())
+    if (areModpacksReady) thewin.webContents.send("modpacks", modpacks)
     lnch.setLogger((d) => {
         thewin.webContents.send('log', d)
         lnchlog = lnchlog + '\n' + d
     })
 })
 
-ipcMain.on('dl-modpack', (e) => {
-    thewin.webContents.send("mpload", true)
+ipcMain.on('dl-modpack', async (e) => {
+    thewin.webContents.send("mpsync", true, selectedModpack)
     lnch.log('== Modpack Download ==')
     let onProgress = status => {
-        thewin.webContents.send("pbar", status.percent*0.8)
-        lnch.log(`[Modpack Download] Progress: ${Math.floor(status.percent*1000)/10}%`)
+      if (status.total){
+        thewin.webContents.send("pbar", status.loaded/status.total) 
+        lnch.log(`[Modpack Download] ${status.phase} | ${Math.floor(status.loaded/status.total*1000)/10}%`)
+      } else {
+        thewin.webContents.send("pbar", 0.3)
+        lnch.log(`[Modpack Download] ${status.phase} | ${status.loaded}`)
+      }
     }
-    let uncompress = (filepath) => {
-      lnch.log("Finished downloading archive to " + filepath)
-      lnch.log('<> Modpack Decompression <>')
-      var unzipper = new DecompressZip(filepath)
-      unzipper.on('progress', function (fileIndex, fileCount) {
-          let perc = (fileIndex + 1) / fileCount
-          lnch.log('[Modpack Unpacking] Extracted file ' + (fileIndex + 1) + ' of ' + fileCount + ` (${Math.floor(perc*1000)/10}%)`)
-          thewin.webContents.send("pbar", perc * 0.2 + 0.8)
-      });
-      unzipper.extract({
-          path: lnch.gameDirectory,
-          filter: function (file) {
-              return file.type !== "SymbolicLink"
-          }
-      })
-      unzipper.on('extract', function (log) {
-          lnch.log('Finished unpacking to ' + lnch.gameDirectory)
-          lnch.log('Deleting the file')
-          thewin.webContents.send("pbar", 0.5)
-          lnch.delFile(filepath)
-          lnch.log('## READY TO PLAY ##')
-          thewin.webContents.send("pbar", 0)
-          thewin.webContents.send("mpload", false)
-          thewin.webContents.send("mpstatus", lnch.checkForModpack())
-      });
-      
-  }
-    if (testermode) return uncompress(lnch.pathModule.join(lnch.appDirectory, '/test-modpack.zip'))
-    
-    download(BrowserWindow.getFocusedWindow(), remoteData.modpackUrl, {directory: app.getPath("temp"), onProgress: onProgress}).then(dl => uncompress(dl.getSavePath()))
+    lnch.installModpack(onProgress).then(()=>{getMpState()})
+    getMpState()
 })
-ipcMain.on('rm-modpack', (e) => {
+ipcMain.on('rm-modpack', async (e) => {
     thewin.webContents.send("mprem", true)
     lnch.deleteModpack()
     thewin.webContents.send("mprem", false)
-    thewin.webContents.send("mpstatus", lnch.checkForModpack())
+    thewin.webContents.send("mpstatus", (await lnch.checkAllModpacks(modpacks)))
 })
+
+ipcMain.on('get_modpacks_status', async (e) => {
+  await getMpState()
+})
+
 
 ipcMain.on('launch', (e, nickname, ram, connect) => {
     if (ram == '') {ram = '4G'}
@@ -118,10 +127,36 @@ ipcMain.on('launch', (e, nickname, ram, connect) => {
 })
 
 ipcMain.on('save-fields', (e, nick, ram, connect) => {
-    lnch.savePrefs(nick, ram, connect)
+    lnch.savePrefs(nick, ram, connect, selectedModpack.name)
 })
 ipcMain.on('tester-mode', (e) => {
   testermode = true;
+})
+ipcMain.on('get_modpacks', (e) => {
+
+  if (areModpacksReady) {
+    thewin.webContents.send("modpacks", modpacks)
+  }
+  else {
+    thewin.webContents.send("modpacks", false)
+  }
+})
+
+
+lnch.getModpacksCallback(() => {
+  if (areModpacksReady) return modpacks
+  else return false
+})
+
+ipcMain.on('select-modpack', (e, modpack) => {
+  for (let mp of modpacks) {
+    if (modpack == mp.name) {
+      console.log(mp)
+      lnch.selectModpack(mp)
+      break
+    }
+  }
+
 })
 ipcMain.on('upload-log', (e) => {
   require('./dogbin')(lnchlog).then((url)=>{

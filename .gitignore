@@ -1,8 +1,8 @@
 # NTMLauncher-specific ignores
 
-NTMLauncher/
+NeTaskLauncherData/
 serve-ntml-modpack/node_modules
-serve-ntml-modpack/modpack/mods
+serve-ntml-modpack/modpack/git
 serve-ntml-modpack/modpack/base.zip
 serve-ntml-modpack/modpack/img.jpg
 serve-ntml-modpack/modpack/img.png
