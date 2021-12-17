@@ -73,6 +73,12 @@ module.exports = function LaunchModule(altospath) {
                 max: ram,
                 min: ram
             },
+            overrides: {
+                detached: false,
+                fw: {
+                    version: '1.5.3',
+                }
+            },
             forge: this.gameDirectory + "/forge.jar"
         }
         
