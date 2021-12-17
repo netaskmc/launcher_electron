@@ -1,6 +1,6 @@
 {
   "name": "ntmlauncher",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "NeTask Launcher",
   "main": "main.js",
   "dependencies": {
