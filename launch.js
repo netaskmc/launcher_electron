@@ -167,4 +167,7 @@ module.exports = function LaunchModule(altospath) {
             }
         }
     }
+    this.acceptModpacks = function(modpacks) {
+        this.modpacks = modpacks
+    }
 }

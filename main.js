@@ -35,7 +35,10 @@ request('https://raw.githubusercontent.com/mlntcandy/NTMLauncher/master/modpackl
         modpacks[mp].link = 'unavailable'
       }
 
-      if (Number(mp) + 1 == modpacks.length) areModpacksReady = true
+      if (Number(mp) + 1 == modpacks.length) {
+        areModpacksReady = true
+        lnch.acceptModpacks(modpacks)
+      }
       console.log(modpacks)
     })
   }
