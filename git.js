@@ -1,12 +1,7 @@
-const isogit = require('isomorphic-git')
 const path = require('path')
-const http = require("isomorphic-git/http/node");
+const Ungit = require('./ungit')
+const ungit = new Ungit()
 
-const digInObjectPath = (arrPath, obj) => {
-    var state = obj
-    for (let p of arrPath) { state = state[p] }
-    return state
-}
 
 function Git(fs, appDir) {
 
@@ -20,22 +15,21 @@ function Git(fs, appDir) {
     var nowUpdating = []
 
     this.checkUpdate = async (modpack) => {
+        
         let dir = path.join(appDir, modpack.name)
         if (nowUpdating.includes(modpack.name)) return "updating"
 
         if (modpack.git == undefined) return null
         // Get last remote commit
-        let remoteInfo = await isogit.getRemoteInfo({http, fs, url: modpack.git})
-        let remoteCommit = digInObjectPath(remoteInfo.HEAD.split('/'), remoteInfo)
+        let remoteCommit = await ungit.remoteRefs({http, fs, url: modpack.git})
 
         // Get last local commit
         try {
-            var localLog = await isogit.log({http, fs, dir, depth: 1})
+            var localCommit = await ungit.localRefs({http, fs, dir, depth: 1})
         } catch (err) {
-            if (err.name == "NotFoundError") return "uninstalled"
+            //if (err.name == "NotFoundError") return "uninstalled"
             throw err
         }
-        let localCommit = localLog[0].oid
         
         // Comparing the two
         if (remoteCommit == localCommit) return "installed"
@@ -53,15 +47,10 @@ function Git(fs, appDir) {
     this.install = async (modpack) => {
         let dir = path.join(appDir, modpack.name)
         nowUpdating.push(modpack.name)
-        await isogit.clone({http, fs, dir, url: modpack.git, onProgress})
+        await ungit.clone({http, fs, dir, url: modpack.git, onProgress})
         nowUpdating = nowUpdating.filter(v => v != modpack.name)
     }
 
-    this.init = async (modpack) => {
-        let dir = path.join(appDir, modpack.name)
-        
-        await isogit.init({ fs, dir })
-    }
 
 }
 
