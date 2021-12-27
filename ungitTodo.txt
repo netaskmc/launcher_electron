@@ -1,0 +1,11 @@
+== Downloading (cloning):
+    1. Download and unzip from https://gitea.stockings.mlntcandy.com/netask/modern/archive/master.zip
+    2. Create an .ungit file (UTF-8), which will contain same info as https://gitea.stockings.mlntcandy.com/netask/modern.git/info/refs plaintext
+
+== Checking for updates:
+    1. Checking remote refs and comparing to local refs from .ungit file
+    2. If not similar, get last remote commit.
+    3. Get commit list and trim to include all commits from last local and leading up to last remote commit
+    commit list: (https://gitea.stockings.mlntcandy.com/api/v1/repos/netask/modern/commits)
+
+    4. 
