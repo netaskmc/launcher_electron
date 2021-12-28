@@ -1,5 +1,5 @@
 const path = require('path')
-const Ungit = require('./ungit')
+const Ungit = require('./mcungit')
 const ungit = new Ungit()
 
 
@@ -15,22 +15,18 @@ function Git(fs, appDir) {
     var nowUpdating = []
 
     this.checkUpdate = async (modpack) => {
-        
+        console.log('bruh')
         let dir = path.join(appDir, modpack.name)
         if (nowUpdating.includes(modpack.name)) return "updating"
 
         if (modpack.git == undefined) return null
         // Get last remote commit
-        let remoteCommit = await ungit.remoteRefs({http, fs, url: modpack.git})
+        let remoteCommit = await ungit.remoteRefs({url: modpack.git})
 
         // Get last local commit
-        try {
-            var localCommit = await ungit.localRefs({http, fs, dir, depth: 1})
-        } catch (err) {
-            //if (err.name == "NotFoundError") return "uninstalled"
-            throw err
-        }
+        var localCommit = await ungit.localRefs({dir, depth: 1})
         
+        if (localCommit == null) return "uninstalled"
         // Comparing the two
         if (remoteCommit == localCommit) return "installed"
         else return "updateable"
@@ -40,17 +36,18 @@ function Git(fs, appDir) {
         let dir = path.join(appDir, modpack.name)
 
         nowUpdating.push(modpack.name)
-        await isogit.pull({http, fs, dir, url: modpack.git, onProgress, author: {name: 'ntml'}})
+        await ungit.pull({dir, zip: modpack.git_repo_dl, onProgress})
         nowUpdating = nowUpdating.filter(v => v != modpack.name)
     }
 
     this.install = async (modpack) => {
         let dir = path.join(appDir, modpack.name)
         nowUpdating.push(modpack.name)
-        await ungit.clone({http, fs, dir, url: modpack.git, onProgress})
+        await ungit.clone({dir, zip: modpack.git_repo_dl, onProgress})
         nowUpdating = nowUpdating.filter(v => v != modpack.name)
     }
 
+    this.acceptElectronDl = (dl) => ungit.acceptElectronDl(dl)
 
 }
 

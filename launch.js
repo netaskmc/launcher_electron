@@ -21,6 +21,8 @@ module.exports = function LaunchModule(altospath) {
 
     loggerFunction = () => {};
 
+    
+
     serverdata = {
         ip: '',
         port: ''
@@ -59,7 +61,7 @@ module.exports = function LaunchModule(altospath) {
     this.launch = function(nickname, ram, connect, version, callback) {
         let opts = {
             clientPackage: null,
-            // For production launchers, I recommend not passing 
+            // For production launchers, I recommend not passing
             // the getAuth function through the authorization field and instead
             // handling authentication outside before you initialize
             // MCLC so you can handle auth based errors and validation!
@@ -167,7 +169,9 @@ module.exports = function LaunchModule(altospath) {
             }
         }
     }
-    this.acceptModpacks = function(modpacks) {
+    this.acceptModpacks = function(modpacks, onSuccess = () => {}) {
         this.modpacks = modpacks
+        this.checkAllModpacks(modpacks).then(onSuccess)
     }
+    this.acceptElectronDl = (dl) => this.git.acceptElectronDl(dl)
 }

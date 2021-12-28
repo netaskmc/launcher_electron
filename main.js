@@ -1,8 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const LaunchModule = require('./launch')
 const lnch = new LaunchModule(app.getPath('documents'));
-const { download } = require('electron-dl')
-var DecompressZip = require('decompress-zip');
+const electronDl = require('electron-dl')
 const request = require('request');
 const { version } = require('request/lib/helpers');
 const urljoin = require('url-join')
@@ -19,6 +18,8 @@ var areModpacksReady = false
 var selectedModpack = ''
 
 require('update-electron-app')()
+
+electronDl()
 
 request('https://raw.githubusercontent.com/mlntcandy/NTMLauncher/master/modpacklist.json', {}, (e, r, b) => {
   remoteData = JSON.parse(b)
@@ -37,7 +38,9 @@ request('https://raw.githubusercontent.com/mlntcandy/NTMLauncher/master/modpackl
 
       if (Number(mp) + 1 == modpacks.length) {
         areModpacksReady = true
-        lnch.acceptModpacks(modpacks)
+        lnch.acceptModpacks(modpacks, () => {
+          getMpState()
+        })
       }
       console.log(modpacks)
     })
@@ -47,7 +50,7 @@ request('https://raw.githubusercontent.com/mlntcandy/NTMLauncher/master/modpackl
 
 console.log(modpacks)
 
-function createWindow () {
+function createWindow() {
   const win = new BrowserWindow({
     width: 500,
     height: 800,
@@ -95,6 +98,26 @@ ipcMain.on('load-finish', async () => {
 
 ipcMain.on('dl-modpack', async (e) => {
     thewin.webContents.send("mpsync", true, selectedModpack)
+    let eldlWrap = (url, savepath, onProgressCb, onCompleted) => {
+      let onProgress = (obj) => {
+        return onProgressCb({
+          phase: obj.phase || "Downloading ZIP archive",
+          loaded: obj.transferredBytes,
+          total: obj.totalBytes
+        })
+      }
+
+      console.log(savepath)
+      var directory = savepath.replaceAll(/\\/g, '/').split('/')
+      let filename = directory.pop()
+      directory = directory.join('/')
+      electronDl.download(thewin, url, {
+        onProgress,
+        directory,
+        filename,
+        onCompleted
+      })
+    }
     lnch.log('== Modpack Download ==')
     let onProgress = status => {
       if (status.total){
@@ -105,6 +128,7 @@ ipcMain.on('dl-modpack', async (e) => {
         lnch.log(`[Modpack Download] ${status.phase} | ${status.loaded}`)
       }
     }
+    lnch.acceptElectronDl(eldlWrap)
     lnch.installModpack(onProgress).then(()=>{getMpState()})
     getMpState()
 })
