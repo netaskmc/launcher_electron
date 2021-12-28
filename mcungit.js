@@ -1,8 +1,9 @@
 const request = require('request')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require("path")
 const glob = require("glob")
-const DecompressZip = require('decompress-zip')
+//const DecompressZip = require('decompress-zip')
+const extractZip = require('extract-zip')
 
 function Ungit() {
 
@@ -15,26 +16,31 @@ function Ungit() {
         })
     })
 
-    this.dlzip = (url, savepath, onProgress) => new Promise((resolve, reject) => {
-        console.log('DLZIP ARGS:', [url, savepath, onProgress])
+    this.dlzip = (url, savepath, onProgress = () => {}) => new Promise((resolve, reject) => {
+        if (fs.existsSync(savepath)) return resolve({path: savepath})
         electronDl(url, savepath, onProgress, resolve)
     })
 
-    this.unzip = (what, where, onProgress) => new Promise((resolve, reject) => {
-        var unzipper = new DecompressZip(what)
-        unzipper.on('progress', (loaded, total) => onProgress({stage: `Decompressing ${what} in ${where}`, loaded, total}))
-        unzipper.on('extract', resolve)
-        unzipper.on('error', reject)
-        console.log(what)
-        console.log(where)
-        unzipper.extract({
-            path: where,
-            strip: 1,
-            filter: function (file) {
-                return file.type !== "SymbolicLink"
-            }
-        })
-    })
+    // this.unzip = (what, where, onProgress) => new Promise((resolve, reject) => {
+    //     var unzipper = new DecompressZip(what)
+    //     unzipper.on('progress', (loaded, total) => onProgress({stage: `Decompressing ${what} in ${where}`, loaded, total}))
+    //     unzipper.on('extract', resolve)
+    //     unzipper.on('error', reject)
+    //     console.log(what)
+    //     console.log(where)
+    //     unzipper.extract({
+    //         path: where,
+    //         strip: 1,
+    //         filter: function (file) {
+    //             return file.type !== "SymbolicLink"
+    //         }
+    //     })
+    // })
+
+    this.unzip = async (what, where, onProgress = () => {} ) => {
+        onProgress({stage: "Unpacking ZIP", total: 1})
+        await extractZip(what, { dir: where })
+    }
 
     this.clone = async (opts) => {
         if (!fs.existsSync(opts.dir)) fs.mkdirSync(opts.dir)
@@ -44,16 +50,13 @@ function Ungit() {
     }
 
     this.remoteRefs = (opts) => new Promise((resolve, reject) => {
-        console.log('I start checking remote ref')
         request(opts.url + '/info/refs', {}, (e, r, b) => {
-            console.log('I dont hang!!')
             if (e) reject(e)
             resolve(b)
         })
     })
 
     this.localRefs = async (opts) => {
-        console.log('I start checking local ref')
         if (!fs.existsSync(path.join(opts.dir + "/.ungit/refs"))) return null
         return fs.readFileSync(path.join(opts.dir + "/.ungit/refs"), "utf-8")
     }
@@ -72,7 +75,13 @@ function Ungit() {
             }
         }
         //decompress the zip
-        await this.unzip(zip.path, opts.dir)
+        await this.unzip(zip.path, path.join(opts.dir, '.ungit/unzipped'), opts.onProgress)
+        let unpackedTo = path.dirname(glob.sync("**/modpack.json", {cwd: path.join(opts.dir, ".ungit/unzipped")})[0])
+        let tmp = path.join(path.dirname(opts.dir), "tmp")
+        fs.moveSync(path.join(opts.dir, ".ungit/unzipped", unpackedTo), tmp, {overwrite: true})
+        fs.copySync(tmp, opts.dir, {overwrite: true})
+        await this.del(tmp)
+        await this.del(zip.path)
         await this.syncLocalRefs(opts)
     }
 

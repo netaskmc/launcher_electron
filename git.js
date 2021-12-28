@@ -36,14 +36,14 @@ function Git(fs, appDir) {
         let dir = path.join(appDir, modpack.name)
 
         nowUpdating.push(modpack.name)
-        await ungit.pull({dir, zip: modpack.git_repo_dl, onProgress})
+        await ungit.pull({dir, zip: modpack.git_repo_dl, url: modpack.git, onProgress})
         nowUpdating = nowUpdating.filter(v => v != modpack.name)
     }
 
     this.install = async (modpack) => {
         let dir = path.join(appDir, modpack.name)
         nowUpdating.push(modpack.name)
-        await ungit.clone({dir, zip: modpack.git_repo_dl, onProgress})
+        await ungit.clone({dir, zip: modpack.git_repo_dl, url: modpack.git, onProgress})
         nowUpdating = nowUpdating.filter(v => v != modpack.name)
     }
 
