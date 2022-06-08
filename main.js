@@ -20,7 +20,7 @@ var selectedModpack = ''
 
 require('update-electron-app')()
 
-request('https://raw.githubusercontent.com/mlntcandy/NTMLauncher/master/modpacklist.json', {}, (e, r, b) => {
+request('https://raw.githubusercontent.com/netaskmc/NTMLauncher/master/modpacklist.json', {}, (e, r, b) => {
   remoteData = JSON.parse(b)
   modpacks = remoteData.modpacks
   // parse modpacks once and for all
