@@ -118,6 +118,6 @@ ipcMain.handle("currentDirectory", (e) => {
       ? process.env.PORTABLE_EXECUTABLE_DIR ?? __dirname
       : app.getPath("documents");
 
-  if (import.meta.env.DEV) return resolve(p, "../../../");
+  if (import.meta.env.DEV) return resolve(__dirname, "../../../");
   return p;
 });
