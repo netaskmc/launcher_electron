@@ -188,6 +188,10 @@ export class Auth {
       nickname,
     });
   }
+
+  getDashboardUrl() {
+    return `${apiUrl}/id`;
+  }
 }
 
 export type SessionType = Session["type"];

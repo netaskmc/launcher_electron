@@ -40,7 +40,19 @@ export const Login: React.FC<Props> = (props) => {
 
         {props.session.type !== "none" &&
           props.session.type !== "awaiting-netask-id" && (
-            <Profile session={props.session} />
+            <>
+              <Profile session={props.session} />
+              {props.session.type === "netask-id" && (
+                <Button
+                  type="primary"
+                  className="!w-full mt-4"
+                  action={() => shell.openExternal(auth.getDashboardUrl())}
+                >
+                  <NeTaskIconSmall />
+                  Manage account
+                </Button>
+              )}
+            </>
           )}
 
         {props.session.type === "none" && (

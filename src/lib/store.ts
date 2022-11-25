@@ -15,7 +15,6 @@ class Store<T extends Record<string, any>> {
   constructor(filename: string, defaults: T) {
     this.filePath = path.join(this.fileDir, filename);
     this.makeDirIfDoesntExist();
-    console.log({ path: this.filePath, exists: this.fileExists() });
     if (this.fileExists()) {
       this.config = this.read();
     } else {

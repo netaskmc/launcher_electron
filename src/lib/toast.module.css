@@ -1,0 +1,33 @@
+.invis {
+  opacity: 0;
+  transform: scale(0.75, 0) translateX(100%);
+}
+
+.vis {
+  opacity: 1;
+  transform: scale(1, 1) translateX(0%);
+}
+
+@keyframes in {
+  from {
+    @apply invis;
+  }
+  to {
+    @apply vis;
+  }
+}
+@keyframes out {
+  from {
+    @apply vis;
+  }
+  to {
+    @apply invis;
+  }
+}
+
+.animateIn {
+  animation: in 150ms ease-out;
+}
+.animateOut {
+  animation: out 150ms ease-out forwards;
+}

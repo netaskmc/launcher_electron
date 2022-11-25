@@ -28,7 +28,9 @@ const App: React.FC = () => {
   const [sessionState, setSessionState] =
     useSession_OnceInAppOrEverythingBreaks();
 
-  const [loginPageVisible, setLoginPageVisible] = useState<boolean>(true);
+  const [loginPageVisible, setLoginPageVisible] = useState<boolean>(
+    sessionState.type === "none"
+  );
 
   return (
     <>
