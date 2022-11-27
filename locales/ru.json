@@ -1,4 +1,6 @@
 {
+    "language_native_name": "Русский",
+
     "loading": "Загрузка",
     "not_logged_in": "Not logged in",
     "account": "Аккаунт",
@@ -13,7 +15,7 @@
     "wait_first_nt_login": "Ожидание входа...",
     "wait_nt_login": "Вход...",
     "pls_login_in_browser": "Пожалуйста, войдите в браузере.",
-    "cancel": "Отменить",
+    "cancel": "Отмена",
     "launch": "Запустить",
 
     "modpacks": "Модпаки",
