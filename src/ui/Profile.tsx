@@ -1,6 +1,7 @@
 import { AwaitingNeTaskSession, Session } from "@/lib/auth";
 import { auth } from "@/lib/store";
 import { LogOut } from "react-feather";
+import { useTranslation } from "react-i18next";
 import { Button } from "./Button";
 import { SkinHead } from "./SkinHead";
 
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export const Profile: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   return (
     <div
       className={`
@@ -31,12 +33,12 @@ export const Profile: React.FC<Props> = (props) => {
           <div className="text-gray-500 capitalize text-xs font-medium">
             {props.session.type === "netask-id" && (
               <>
-                <span className="font-bold">NeTask ID</span>
+                <span className="font-bold">{t("ntid")}</span>
                 {!props.compact && ` - ${props.session.ntid.name}`}
               </>
             )}
             {props.session.type === "offline" && (
-              <span className="font-bold">Offline</span>
+              <span className="font-bold">{t("offline")}</span>
             )}
           </div>
         )}
@@ -47,10 +49,10 @@ export const Profile: React.FC<Props> = (props) => {
               <>{props.session.nickname}</>
             )}
           {!!props.session && props.session.type === "awaiting-netask-id" && (
-            <>Loading...</>
+            <>{t("Loading")}</>
           )}
           {(!props.session || props.session.type === "none") && (
-            <>Not logged in</>
+            <>{t("not_logged_in")}</>
           )}
         </div>
       </div>

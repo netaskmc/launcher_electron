@@ -3,15 +3,20 @@
     "not_logged_in": "Not logged in",
     "account": "Account",
     "login": "Login",
+    "ntid": "NeTask ID",
     "login_with_nt": "Login with NeTask ID",
     "login_offline": "Play offline",
     "offline": "Offline",
     "set_nickname": "Set nickname",
     "nickname": "Nickname",
+    "manage_account": "Manage account",
     "wait_first_nt_login": "Waiting for you to log in...",
     "wait_nt_login": "Logging in...",
     "pls_login_in_browser": "Please login in the browser.",
+    "cancel": "Cancel",
     "launch": "Launch",
 
-    "modpacks": "Modpacks"
+    "modpacks": "Modpacks",
+    "news": "News",
+    "updates": "Updates"
 }

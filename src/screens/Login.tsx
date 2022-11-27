@@ -7,6 +7,7 @@ import { TextInput } from "@/ui/TextInput";
 import { useRef, useState } from "react";
 import { UserX } from "react-feather";
 import { shell } from "electron";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   session: Session;
@@ -18,6 +19,7 @@ type Props = {
 const validateNickname = (n: string) => /^[A-Za-z0-9_]{3,16}$/.test(n);
 
 export const Login: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const [offlineOpen, setOfflineOpen] = useState(false);
   const offlineNicknameRef = useRef<string>();
   return (
@@ -35,7 +37,7 @@ export const Login: React.FC<Props> = (props) => {
     >
       <div className="bg-black bg-nt-dotted shadow-xl shadow-nt-secondary/10 rounded-2xl p-10">
         <h1 className="text-xl font-bold mb-10">
-          {props.session.type !== "none" ? "Account" : "Login"}
+          {props.session.type !== "none" ? t("account") : t("login")}
         </h1>
 
         {props.session.type !== "none" &&
@@ -49,7 +51,7 @@ export const Login: React.FC<Props> = (props) => {
                   action={() => shell.openExternal(auth.getDashboardUrl())}
                 >
                   <NeTaskIconSmall />
-                  Manage account
+                  {t("manage_account")}
                 </Button>
               )}
             </>
@@ -68,7 +70,7 @@ export const Login: React.FC<Props> = (props) => {
               }}
             >
               <NeTaskIconSmall />
-              Login with NeTask ID
+              {t("login_with_nt")}
             </Button>
             <Button
               type="secondary"
@@ -76,7 +78,7 @@ export const Login: React.FC<Props> = (props) => {
               action={() => setOfflineOpen((p) => !p)}
             >
               <UserX size={18} />
-              Play offline
+              {t("login_offline")}
             </Button>
             <div
               className={`transition-all ${
@@ -85,9 +87,9 @@ export const Login: React.FC<Props> = (props) => {
                   : "scale-y-0 scale-x-75 opacity-0 h-0 mt-0"
               }`}
             >
-              <div className="text-lg mb-4">Offline</div>
+              <div className="text-lg mb-4">{t("offline")}</div>
               <TextInput
-                placeholder="Nickname"
+                placeholder={t("nickname") ?? ""}
                 valueRef={offlineNicknameRef}
                 className="mb-2"
                 validate={validateNickname}
@@ -102,7 +104,7 @@ export const Login: React.FC<Props> = (props) => {
                   props.hide();
                 }}
               >
-                Set nickname
+                {t("set_nickname")}
               </Button>
             </div>
           </>
@@ -111,14 +113,14 @@ export const Login: React.FC<Props> = (props) => {
         {props.session.type === "awaiting-netask-id" &&
           props.session.firstTime && (
             <>
-              <div className="text-xl">Waiting for you to log in...</div>
-              <div>Please login in the browser.</div>
+              <div className="text-xl">{t("wait_first_nt_login")}</div>
+              <div>{t("pls_login_in_browser")}</div>
               <Button
                 type="secondary"
                 className="!w-full mt-4"
                 action={() => auth.invalidateSession()}
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </>
           )}
@@ -126,7 +128,7 @@ export const Login: React.FC<Props> = (props) => {
         {props.session.type === "awaiting-netask-id" &&
           !props.session.firstTime && (
             <>
-              <div className="text-xl">Logging in...</div>
+              <div className="text-xl">{t("wait_nt_login")}</div>
             </>
           )}
       </div>

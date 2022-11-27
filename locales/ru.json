@@ -1,0 +1,22 @@
+{
+    "loading": "Загрузка",
+    "not_logged_in": "Not logged in",
+    "account": "Аккаунт",
+    "login": "Вход",
+    "ntid": "NeTask ID",
+    "login_with_nt": "Войти через NeTask ID",
+    "login_offline": "Играть оффлайн",
+    "offline": "Оффлайн",
+    "set_nickname": "Установить ник",
+    "nickname": "Никнейм",
+    "manage_account": "Управление аккаунтом",
+    "wait_first_nt_login": "Ожидание входа...",
+    "wait_nt_login": "Вход...",
+    "pls_login_in_browser": "Пожалуйста, войдите в браузере.",
+    "cancel": "Отменить",
+    "launch": "Запустить",
+
+    "modpacks": "Модпаки",
+    "news": "Новости",
+    "updates": "Обновления"
+}

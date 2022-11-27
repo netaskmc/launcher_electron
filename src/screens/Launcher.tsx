@@ -3,6 +3,7 @@ import { AwaitingNeTaskSession, Session } from "@/lib/auth";
 import { Button } from "@/ui/Button";
 import { Profile } from "@/ui/Profile";
 import { Settings } from "react-feather";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   session: Session | AwaitingNeTaskSession | null;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export const Launcher: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   return (
     <div
       className={`
