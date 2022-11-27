@@ -1,3 +1,4 @@
+import { SliderSection } from "@/ui/SectionSlider";
 import { ipcRenderer } from "electron";
 import fs from "node:fs";
 import path from "path";
@@ -17,10 +18,21 @@ class Store<T extends Record<string, any>> {
     this.makeDirIfDoesntExist();
     if (this.fileExists()) {
       this.config = this.read();
+      this.fillInDefaults(defaults);
+      this.save();
     } else {
       this.config = defaults;
       this.save();
     }
+  }
+
+  private fillInDefaults(defaults: T) {
+    Object.keys(defaults).forEach((k) => {
+      if (!(k in this.config)) {
+        let key = k as keyof T;
+        this.config[key] = defaults[key];
+      }
+    });
   }
 
   private makeDirIfDoesntExist() {
@@ -52,6 +64,7 @@ class Store<T extends Record<string, any>> {
 type StoreType = {
   session: Session;
   settings: {};
+  openedSection: SliderSection;
 };
 
 export const store = new Store<StoreType>("data.netaskcfg", {
@@ -59,6 +72,7 @@ export const store = new Store<StoreType>("data.netaskcfg", {
     type: "none",
   },
   settings: {},
+  openedSection: "modpacks",
 });
 
 export const auth = new Auth(store.get("session"));
