@@ -43,7 +43,7 @@ export const Button: React.FC<Props> = (props) => {
     <Btn
       className={`
         flex gap-2 px-3 py-2 rounded-md w-fit scale-100 hover:scale-95 transition-transform justify-center items-center
-        
+        relative
         ${
           props.type === "primary"
             ? "bg-gradient-to-r from-nt-secondary to-nt-primary"
