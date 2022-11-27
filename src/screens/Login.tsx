@@ -33,7 +33,7 @@ export const Login: React.FC<Props> = (props) => {
         props.hide();
       }}
     >
-      <div className="bg-black shadow-md rounded-2xl p-10">
+      <div className="bg-black bg-nt-dotted shadow-xl shadow-nt-secondary/10 rounded-2xl p-10">
         <h1 className="text-xl font-bold mb-10">
           {props.session.type !== "none" ? "Account" : "Login"}
         </h1>
