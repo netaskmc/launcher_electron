@@ -29,7 +29,7 @@ export const Login: React.FC<Props> = (props) => {
       ${!props.show ? "translate-y-full scale-0" : ""}
     `}
       data-container="true"
-      onClick={(e) => {
+      onMouseDown={(e) => {
         if (!props.canClose) return;
         if (!(e.target as HTMLElement).hasAttribute("data-container")) return;
         props.hide();
