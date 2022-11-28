@@ -17,6 +17,9 @@ process.env.PUBLIC = app.isPackaged
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "os";
 import { join, resolve } from "path";
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -67,6 +70,11 @@ async function createWindow() {
     if (url.startsWith("https:")) shell.openExternal(url);
     return { action: "deny" };
   });
+
+  if (!app.isPackaged) {
+    await installExtension(REACT_DEVELOPER_TOOLS);
+    console.log("Installed React DevTools");
+  }
 }
 
 app.whenReady().then(createWindow);
